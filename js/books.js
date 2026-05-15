@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   "use strict";
 
   window.BOOKS_DATA = {
@@ -206,7 +206,8 @@
       {
         id: "book_12",
         title: "Histoires et légendes de l'au-delà",
-        cover: "assets/covers/book_12.webp",
+        cover: "assets/covers/aa.jpg",
+        backCover: "assets/covers/61-dabhl0VL.jpg",
         summary: [
           "Certaines maisons ne devraient jamais être visitées. Certains chemins ne devraient jamais être suivis. Et certaines voix… ne devraient jamais être écoutées.",
           "Dans Histoires et légendes de l’au-delà, chaque nouvelle ouvre une faille dans le réel : une demeure oubliée, un sentier qui remplace ceux qui l’empruntent, un miroir qui observe, une station qui n’existe sur aucun plan, une clochette qui sonne sans qu’aucune main ne la touche.",

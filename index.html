@@ -30,7 +30,10 @@
     <article class="book-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <button class="modal-close" type="button" data-close-modal aria-label="Fermer">×</button>
       <div class="modal-cover-wrap">
+        <button id="modalPrevBtn" class="modal-arrow modal-arrow--prev" type="button" data-modal-prev hidden aria-label="Image précédente">‹</button>
         <img id="modalCover" class="modal-cover" alt="" />
+        <button id="modalNextBtn" class="modal-arrow modal-arrow--next" type="button" data-modal-next hidden aria-label="Image suivante">›</button>
+        <div id="modalImageCount" class="modal-image-count" hidden></div>
         <div id="modalCoverFallback" class="modal-cover-fallback" hidden></div>
       </div>
       <div class="modal-content">

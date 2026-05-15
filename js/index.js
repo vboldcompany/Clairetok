@@ -11,6 +11,13 @@
   const modalCover = document.getElementById("modalCover");
   const modalCoverFallback = document.getElementById("modalCoverFallback");
   const modalAmazonBtn = document.getElementById("modalAmazonBtn");
+  const modalPrevBtn = document.getElementById("modalPrevBtn");
+  const modalNextBtn = document.getElementById("modalNextBtn");
+  const modalImageCount = document.getElementById("modalImageCount");
+
+  let activeBook = null;
+  let activeImages = [];
+  let activeImageIndex = 0;
 
   function normalizeLocaleTag(tag){
     return String(tag || "").trim().replace(/_/g, "-");
@@ -116,8 +123,12 @@
       .replace(/'/g, "&#039;");
   }
 
+  function normalizeText(value){
+    return String(value || "").replace(/\s+/g, " ").trim();
+  }
+
   function clampText(value, max){
-    const text = String(value || "").replace(/\s+/g, " ").trim();
+    const text = normalizeText(value);
     if (text.length <= max) return text;
     return text.slice(0, max - 1).trim().replace(/[,.!?:;\-–—]+$/, "") + "…";
   }
@@ -132,10 +143,16 @@
     }) || null;
   }
 
-  function hideMissingImage(img){
-    const visualButton = img.closest(".book-visual-button");
-    if (!visualButton) return;
+  function getBookImages(book){
+    if (!book) return [];
+    return [book.cover, book.backCover].filter(function(src){
+      return !!String(src || "").trim();
+    });
+  }
 
+  function hideMissingImage(img){
+    const visualButton = img.closest(".book-cover-button");
+    if (!visualButton) return;
     visualButton.hidden = true;
 
     const card = visualButton.closest(".book-card");
@@ -154,22 +171,21 @@
     });
 
     booksGrid.innerHTML = visibleBooks.map(function(book){
-      const summary = getSummary(book);
-      const shortText = clampText(summary[0] || "Découvrez une histoire sombre issue de notre univers.", 138);
+      const summaryText = normalizeText(getSummary(book).join(" ")) || "Découvrez une histoire sombre issue de notre univers.";
+      const shortText = clampText(summaryText, 260);
+      const needsMore = summaryText.length > 260;
       const amazonUrl = buildAmazonUrl(book);
 
       return '' +
         '<article class="book-card" data-book-id="' + escapeHtml(book.id) + '">' +
-          '<button class="book-visual-button" type="button" data-open-book="' + escapeHtml(book.id) + '" aria-label="Voir ' + escapeHtml(book.title) + '">' +
+          '<button class="book-cover-button" type="button" data-open-book="' + escapeHtml(book.id) + '" aria-label="Voir la couverture de ' + escapeHtml(book.title) + '">' +
             '<img class="book-card-img" src="' + escapeHtml(book.cover) + '" alt="' + escapeHtml(book.title) + '" loading="lazy" data-book-img="' + escapeHtml(book.id) + '">' +
           '</button>' +
           '<div class="book-body">' +
             '<h2 class="book-card-title">' + escapeHtml(book.title) + '</h2>' +
             '<p class="book-short">' + escapeHtml(shortText) + '</p>' +
-            '<div class="book-actions">' +
-              '<button class="details-btn" type="button" data-open-book="' + escapeHtml(book.id) + '" aria-label="Résumé de ' + escapeHtml(book.title) + '">Voir résumé</button>' +
-              '<a class="amazon-btn" href="' + escapeHtml(amazonUrl) + '" target="_blank" rel="noopener noreferrer">Acheter sur Amazon</a>' +
-            '</div>' +
+            (needsMore ? '<button class="more-btn" type="button" data-open-book="' + escapeHtml(book.id) + '">Voir plus</button>' : '') +
+            '<a class="amazon-btn" href="' + escapeHtml(amazonUrl) + '" target="_blank" rel="noopener noreferrer">Acheter sur Amazon</a>' +
           '</div>' +
         '</article>';
     }).join("");
@@ -181,9 +197,52 @@
     });
   }
 
+  function refreshModalImage(){
+    if (!modalCover || !activeImages.length) return;
+
+    const src = activeImages[activeImageIndex];
+    modalCover.hidden = false;
+    modalCover.src = src;
+    modalCover.alt = activeImageIndex === 0 ? "Couverture du livre" : "Quatrième de couverture";
+
+    if (modalCoverFallback){
+      modalCoverFallback.hidden = true;
+      modalCoverFallback.textContent = "";
+    }
+
+    const hasManyImages = activeImages.length > 1;
+    if (modalPrevBtn) modalPrevBtn.hidden = !hasManyImages;
+    if (modalNextBtn) modalNextBtn.hidden = !hasManyImages;
+    if (modalImageCount){
+      modalImageCount.hidden = !hasManyImages;
+      modalImageCount.textContent = (activeImageIndex + 1) + " / " + activeImages.length;
+    }
+
+    modalCover.onerror = function(){
+      activeImages.splice(activeImageIndex, 1);
+      if (!activeImages.length){
+        const wrap = modalCover.closest(".modal-cover-wrap");
+        if (wrap) wrap.hidden = true;
+        return;
+      }
+      if (activeImageIndex >= activeImages.length) activeImageIndex = 0;
+      refreshModalImage();
+    };
+  }
+
+  function moveModalImage(direction){
+    if (!activeImages.length) return;
+    activeImageIndex = (activeImageIndex + direction + activeImages.length) % activeImages.length;
+    refreshModalImage();
+  }
+
   function openBook(id){
     const book = getBookById(id);
     if (!book || !modal) return;
+
+    activeBook = book;
+    activeImages = getBookImages(book);
+    activeImageIndex = 0;
 
     const summary = getSummary(book);
     const amazonUrl = buildAmazonUrl(book);
@@ -204,25 +263,8 @@
     }
 
     const modalCoverWrap = modalCover ? modalCover.closest(".modal-cover-wrap") : null;
-    if (modalCoverWrap) modalCoverWrap.hidden = false;
-
-    modalCover.hidden = false;
-    modalCover.src = book.cover || "";
-    modalCover.alt = book.title || "Couverture du livre";
-
-    if (modalCoverFallback){
-      modalCoverFallback.hidden = true;
-      modalCoverFallback.textContent = "";
-    }
-
-    modalCover.onerror = function(){
-      modalCover.hidden = true;
-      if (modalCoverWrap) modalCoverWrap.hidden = true;
-      if (modalCoverFallback){
-        modalCoverFallback.hidden = true;
-        modalCoverFallback.textContent = "";
-      }
-    };
+    if (modalCoverWrap) modalCoverWrap.hidden = activeImages.length === 0;
+    refreshModalImage();
 
     modal.hidden = false;
     modal.setAttribute("aria-hidden", "false");
@@ -234,6 +276,9 @@
     modal.hidden = true;
     modal.setAttribute("aria-hidden", "true");
     document.documentElement.style.overflow = "";
+    activeBook = null;
+    activeImages = [];
+    activeImageIndex = 0;
   }
 
   function bindEvents(){
@@ -245,6 +290,18 @@
         return;
       }
 
+      if (event.target.closest("[data-modal-prev]")){
+        event.preventDefault();
+        moveModalImage(-1);
+        return;
+      }
+
+      if (event.target.closest("[data-modal-next]")){
+        event.preventDefault();
+        moveModalImage(1);
+        return;
+      }
+
       if (event.target.closest("[data-close-modal]")){
         event.preventDefault();
         closeBook();
@@ -253,6 +310,9 @@
 
     document.addEventListener("keydown", function(event){
       if (event.key === "Escape") closeBook();
+      if (!modal || modal.hidden) return;
+      if (event.key === "ArrowLeft") moveModalImage(-1);
+      if (event.key === "ArrowRight") moveModalImage(1);
     });
   }
 
