@@ -1,59 +1,46 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mes livres d'horreur</title>
-  <meta name="description" content="Découvrez mes livres d'horreur, de mystère et de légendes sombres." />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Notre univers | VBoldStudio</title>
+  <meta name="description" content="Découvrez notre univers d’horreur : romans, nouvelles et légendes sombres." />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 
 <body>
-  <header class="site-header">
-    <div class="container nav">
-      <a class="brand" href="index.html" aria-label="Retour à l'accueil">
-        <div class="brand-mark">V</div>
-        <div class="brand-text">
-          <strong>VBoldStudio</strong>
-          <span>Livres d'horreur</span>
-        </div>
-      </a>
-
-      <div class="market-pill">
-        <span id="marketNote">Boutique Amazon : détection…</span>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero">
-      <div class="container">
-        <div class="hero-card">
-          <p class="eyebrow">Romans • Nouvelles • Légendes sombres</p>
-          <h1>Mes livres d'horreur</h1>
-          <p class="hero-text">
-            Des récits sombres, mystérieux et inquiétants, entre lieux oubliés,
-            présences invisibles et légendes qui auraient dû rester enterrées.
-          </p>
-
-          <div class="market-select-wrap">
-            <label for="marketSelect">Choisir la boutique Amazon</label>
-            <select id="marketSelect"></select>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="books-section">
-      <div class="container">
-        <div id="booksGrid" class="books-grid"></div>
-
-        <p id="booksEmpty" class="books-empty" hidden>
-          Aucun livre disponible pour cette boutique pour le moment.
+  <main class="page-shell">
+    <section class="hero" aria-labelledby="mainTitle">
+      <div class="hero-inner">
+        <div class="studio-pill">VBoldStudio</div>
+        <h1 id="mainTitle">Notre univers</h1>
+        <p class="hero-text">
+          Des histoires sombres, des lieux interdits, des présences invisibles et des légendes qui n’auraient jamais dû être réveillées.
         </p>
       </div>
     </section>
+
+    <section class="books-section" aria-label="Livres disponibles">
+      <div id="booksGrid" class="books-grid"></div>
+    </section>
   </main>
+
+  <div id="bookModal" class="book-modal" hidden aria-hidden="true">
+    <div class="book-modal-backdrop" data-close-modal></div>
+    <article class="book-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" type="button" data-close-modal aria-label="Fermer">×</button>
+      <div class="modal-cover-wrap">
+        <img id="modalCover" class="modal-cover" alt="" />
+        <div id="modalCoverFallback" class="modal-cover-fallback" hidden></div>
+      </div>
+      <div class="modal-content">
+        <p class="modal-kicker">Livre d’horreur</p>
+        <h2 id="modalTitle"></h2>
+        <div id="modalSummary" class="modal-summary"></div>
+        <a id="modalAmazonBtn" class="amazon-btn amazon-btn-main" href="#" target="_blank" rel="noopener noreferrer">Acheter sur Amazon</a>
+      </div>
+    </article>
+  </div>
 
   <script src="js/books.js"></script>
   <script src="js/index.js"></script>
