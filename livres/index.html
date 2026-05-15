@@ -1,0 +1,61 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mes livres d'horreur</title>
+  <meta name="description" content="Découvrez mes livres d'horreur, de mystère et de légendes sombres." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html" aria-label="Retour à l'accueil">
+        <div class="brand-mark">V</div>
+        <div class="brand-text">
+          <strong>VBoldStudio</strong>
+          <span>Livres d'horreur</span>
+        </div>
+      </a>
+
+      <div class="market-pill">
+        <span id="marketNote">Boutique Amazon : détection…</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <p class="eyebrow">Romans • Nouvelles • Légendes sombres</p>
+          <h1>Mes livres d'horreur</h1>
+          <p class="hero-text">
+            Des récits sombres, mystérieux et inquiétants, entre lieux oubliés,
+            présences invisibles et légendes qui auraient dû rester enterrées.
+          </p>
+
+          <div class="market-select-wrap">
+            <label for="marketSelect">Choisir la boutique Amazon</label>
+            <select id="marketSelect"></select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="books-section">
+      <div class="container">
+        <div id="booksGrid" class="books-grid"></div>
+
+        <p id="booksEmpty" class="books-empty" hidden>
+          Aucun livre disponible pour cette boutique pour le moment.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/books.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
