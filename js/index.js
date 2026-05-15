@@ -142,10 +142,18 @@
     if (card) card.classList.add("book-card--no-cover");
   }
 
+  function hasValidAsinForCurrentMarket(book){
+    return !!buildAmazonUrl(book);
+  }
+
   function renderBooks(){
     if (!booksGrid) return;
 
-    booksGrid.innerHTML = DATA.books.map(function(book){
+    const visibleBooks = DATA.books.filter(function(book){
+      return hasValidAsinForCurrentMarket(book);
+    });
+
+    booksGrid.innerHTML = visibleBooks.map(function(book){
       const summary = getSummary(book);
       const shortText = clampText(summary[0] || "Découvrez une histoire sombre issue de notre univers.", 138);
       const amazonUrl = buildAmazonUrl(book);
@@ -160,7 +168,7 @@
             '<p class="book-short">' + escapeHtml(shortText) + '</p>' +
             '<div class="book-actions">' +
               '<button class="details-btn" type="button" data-open-book="' + escapeHtml(book.id) + '" aria-label="Résumé de ' + escapeHtml(book.title) + '">Voir résumé</button>' +
-              (amazonUrl ? '<a class="amazon-btn" href="' + escapeHtml(amazonUrl) + '" target="_blank" rel="noopener noreferrer">Acheter sur Amazon</a>' : '') +
+              '<a class="amazon-btn" href="' + escapeHtml(amazonUrl) + '" target="_blank" rel="noopener noreferrer">Acheter sur Amazon</a>' +
             '</div>' +
           '</div>' +
         '</article>';
