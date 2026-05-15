@@ -98,134 +98,202 @@ h1{
   line-height:1.65;
 }
 
-.books-section{ padding:14px 0 0; }
+
+.books-section{
+  padding:14px 0 0;
+}
+
 .books-grid{
   display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
+  grid-template-columns:repeat(2, minmax(0, 1fr));
   gap:16px;
 }
+
 .book-card{
   position:relative;
+  display:grid;
+  grid-template-columns:132px minmax(0, 1fr);
+  gap:14px;
+  min-height:232px;
+  padding:12px;
   overflow:hidden;
-  min-height:310px;
-  border:0;
   border-radius:var(--vc-card-r);
-  background:rgba(0,0,0,.22);
+  background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.04));
+  border:1px solid rgba(255,255,255,.11);
   box-shadow:0 16px 36px rgba(0,0,0,.30), 0 1px 0 rgba(255,255,255,.05) inset;
   transform:translateZ(0);
 }
+
 .book-visual-button{
   position:relative;
   display:block;
   width:100%;
-  height:188px;
+  aspect-ratio:9 / 16;
+  height:auto;
   padding:0;
+  overflow:hidden;
   border:0;
+  border-radius:16px;
   cursor:pointer;
-  background:linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-  text-align:left;
+  background:transparent;
+  box-shadow:0 12px 28px rgba(0,0,0,.34);
   -webkit-tap-highlight-color:transparent;
 }
+
 .book-card-img{
   width:100%;
   height:100%;
   object-fit:cover;
   object-position:center;
-  filter:saturate(.96) contrast(1.06);
-  transform:scale(1.02);
+  filter:saturate(.98) contrast(1.05);
 }
-.book-image-fallback{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  color:rgba(255,255,255,.72);
-  text-align:center;
-  font-weight:950;
-  font-size:1.15rem;
-  line-height:1.12;
-  background:
-    radial-gradient(circle at 25% 18%, rgba(255,59,59,.26), transparent 34%),
-    radial-gradient(circle at 80% 88%, rgba(120,160,255,.20), transparent 34%),
-    linear-gradient(135deg, rgba(0,0,0,.26), rgba(255,255,255,.065));
+
+.book-card--no-cover{
+  grid-template-columns:1fr;
 }
-.book-visual-button::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.70));
-}
-.book-title-overlay{
-  position:absolute;
-  left:14px;
-  right:14px;
-  bottom:12px;
-  z-index:2;
-  color:#fff;
-  font-size:1.18rem;
-  line-height:1.08;
-  font-weight:950;
-  text-shadow:0 4px 16px rgba(0,0,0,.72);
-}
+
 .book-body{
-  min-height:122px;
+  min-width:0;
   display:flex;
   flex-direction:column;
-  gap:12px;
-  padding:14px;
-  background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.045));
-  border-top:1px solid rgba(255,255,255,.10);
+  gap:9px;
+  padding:4px 2px 2px;
 }
+
+.book-card-title{
+  margin:0;
+  color:#fff;
+  font-size:1.16rem;
+  line-height:1.12;
+  font-weight:950;
+  letter-spacing:-.025em;
+  text-shadow:0 4px 14px rgba(0,0,0,.45);
+}
+
 .book-short{
   margin:0;
   color:rgba(255,255,255,.76);
-  font-size:.93rem;
-  line-height:1.48;
+  font-size:.92rem;
+  line-height:1.46;
 }
+
 .book-actions{
   display:flex;
-  gap:10px;
-  align-items:center;
+  flex-direction:column;
+  gap:8px;
+  align-items:stretch;
   margin-top:auto;
 }
+
 .details-btn,
 .amazon-btn{
-  min-height:44px;
+  min-height:40px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  border-radius:15px;
+  border-radius:13px;
   border:1px solid rgba(255,255,255,.14);
   font-weight:900;
   text-align:center;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
+
 .details-btn{
-  flex:0 0 auto;
-  width:48px;
-  padding:0;
+  width:100%;
+  padding:9px 12px;
   color:#fff;
   background:rgba(255,255,255,.095);
 }
+
 .amazon-btn{
-  flex:1 1 auto;
-  padding:11px 13px;
+  width:100%;
+  padding:10px 12px;
   color:#fff;
   background:linear-gradient(180deg, rgba(255,59,59,.98), rgba(183,27,27,.96));
   box-shadow:0 10px 20px rgba(183,27,27,.22);
 }
+
 .book-card,
 .amazon-btn,
 .details-btn{
   transition:transform .2s ease, filter .2s ease, background .2s ease;
 }
+
 @media (hover:hover){
-  .book-card:hover{ transform:translateY(-4px); }
-  .amazon-btn:hover,.details-btn:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+  .book-card:hover{
+    transform:translateY(-4px);
+  }
+
+  .amazon-btn:hover,
+  .details-btn:hover{
+    filter:brightness(1.08);
+    transform:translateY(-1px);
+  }
+}
+
+@media (max-width:900px){
+  .books-grid{
+    grid-template-columns:1fr;
+  }
+
+  .book-card{
+    grid-template-columns:128px minmax(0, 1fr);
+  }
+}
+
+@media (max-width:520px){
+  .books-grid{
+    grid-template-columns:1fr;
+    gap:13px;
+  }
+
+  .book-card{
+    grid-template-columns:104px minmax(0, 1fr);
+    gap:11px;
+    min-height:188px;
+    padding:10px;
+    border-radius:20px;
+  }
+
+  .book-visual-button{
+    border-radius:14px;
+  }
+
+  .book-card-title{
+    font-size:1rem;
+    line-height:1.12;
+  }
+
+  .book-short{
+    font-size:.86rem;
+    line-height:1.38;
+  }
+
+  .details-btn,
+  .amazon-btn{
+    min-height:36px;
+    border-radius:12px;
+    font-size:.86rem;
+  }
+}
+
+@media (max-width:360px){
+  .book-card{
+    grid-template-columns:92px minmax(0, 1fr);
+    gap:9px;
+  }
+
+  .book-short{
+    font-size:.82rem;
+  }
+
+  .details-btn,
+  .amazon-btn{
+    font-size:.8rem;
+    padding-left:8px;
+    padding-right:8px;
+  }
 }
 
 .book-modal{
@@ -333,18 +401,10 @@ h1{
   margin-top:8px;
 }
 
-@media (max-width:900px){
-  .books-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
-}
 @media (max-width:640px){
   .page-shell{ width:min(100% - 16px, 1120px); padding-top:12px; }
   .hero{ min-height:auto; padding:12px 0 12px; }
   .hero-inner{ padding:22px 14px 20px; border-radius:26px; }
-  .books-grid{ grid-template-columns:1fr; gap:13px; }
-  .book-card{ min-height:0; border-radius:20px; }
-  .book-visual-button{ height:168px; }
-  .book-body{ padding:13px; }
-  .book-short{ font-size:.92rem; }
   .book-modal{ align-items:flex-end; padding:10px; }
   .book-modal-card{
     width:100%;
@@ -362,7 +422,4 @@ h1{
   .amazon-btn-main{ width:100%; }
 }
 @media (max-width:360px){
-  .book-visual-button{ height:148px; }
-  .book-actions{ gap:8px; }
-  .amazon-btn{ font-size:.92rem; }
 }

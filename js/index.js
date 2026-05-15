@@ -97,15 +97,14 @@
 
   function buildAmazonUrl(book){
     const market = detectMarket();
-    if (!book || !market) return "https://www.amazon.fr/";
+    if (!book || !market) return "";
 
     const asin = String(book.asins && book.asins[market.lang] ? book.asins[market.lang] : "").trim();
     if (isFilledAsin(asin)){
       return "https://www." + market.domain + "/dp/" + encodeURIComponent(asin);
     }
 
-    const query = encodeURIComponent((book.title || "") + " Charles Vaudeclaire");
-    return "https://www." + market.domain + "/s?k=" + query;
+    return "";
   }
 
   function escapeHtml(value){
@@ -133,18 +132,14 @@
     }) || null;
   }
 
-  function showImageFallback(img, title){
-    const parent = img.closest(".book-visual-button") || img.parentElement;
-    if (!parent) return;
+  function hideMissingImage(img){
+    const visualButton = img.closest(".book-visual-button");
+    if (!visualButton) return;
 
-    img.hidden = true;
-    let fallback = parent.querySelector(".book-image-fallback");
-    if (!fallback){
-      fallback = document.createElement("div");
-      fallback.className = "book-image-fallback";
-      parent.insertBefore(fallback, parent.firstChild);
-    }
-    fallback.textContent = title || "Livre";
+    visualButton.hidden = true;
+
+    const card = visualButton.closest(".book-card");
+    if (card) card.classList.add("book-card--no-cover");
   }
 
   function renderBooks(){
@@ -159,13 +154,13 @@
         '<article class="book-card" data-book-id="' + escapeHtml(book.id) + '">' +
           '<button class="book-visual-button" type="button" data-open-book="' + escapeHtml(book.id) + '" aria-label="Voir ' + escapeHtml(book.title) + '">' +
             '<img class="book-card-img" src="' + escapeHtml(book.cover) + '" alt="' + escapeHtml(book.title) + '" loading="lazy" data-book-img="' + escapeHtml(book.id) + '">' +
-            '<strong class="book-title-overlay">' + escapeHtml(book.title) + '</strong>' +
           '</button>' +
           '<div class="book-body">' +
+            '<h2 class="book-card-title">' + escapeHtml(book.title) + '</h2>' +
             '<p class="book-short">' + escapeHtml(shortText) + '</p>' +
             '<div class="book-actions">' +
-              '<button class="details-btn" type="button" data-open-book="' + escapeHtml(book.id) + '" aria-label="Résumé de ' + escapeHtml(book.title) + '">＋</button>' +
-              '<a class="amazon-btn" href="' + escapeHtml(amazonUrl) + '" target="_blank" rel="noopener noreferrer">Acheter sur Amazon</a>' +
+              '<button class="details-btn" type="button" data-open-book="' + escapeHtml(book.id) + '" aria-label="Résumé de ' + escapeHtml(book.title) + '">Voir résumé</button>' +
+              (amazonUrl ? '<a class="amazon-btn" href="' + escapeHtml(amazonUrl) + '" target="_blank" rel="noopener noreferrer">Acheter sur Amazon</a>' : '') +
             '</div>' +
           '</div>' +
         '</article>';
@@ -173,8 +168,7 @@
 
     Array.from(document.querySelectorAll("[data-book-img]")).forEach(function(img){
       img.addEventListener("error", function(){
-        const book = getBookById(img.getAttribute("data-book-img"));
-        showImageFallback(img, book ? book.title : "Livre");
+        hideMissingImage(img);
       }, { once:true });
     });
   }
@@ -191,17 +185,35 @@
       return '<p>' + escapeHtml(paragraph) + '</p>';
     }).join("") || '<p>Découvrez une histoire sombre issue de notre univers.</p>';
 
-    modalAmazonBtn.href = amazonUrl;
+    if (modalAmazonBtn){
+      if (amazonUrl){
+        modalAmazonBtn.hidden = false;
+        modalAmazonBtn.href = amazonUrl;
+      }else{
+        modalAmazonBtn.hidden = true;
+        modalAmazonBtn.removeAttribute("href");
+      }
+    }
+
+    const modalCoverWrap = modalCover ? modalCover.closest(".modal-cover-wrap") : null;
+    if (modalCoverWrap) modalCoverWrap.hidden = false;
 
     modalCover.hidden = false;
     modalCover.src = book.cover || "";
     modalCover.alt = book.title || "Couverture du livre";
-    modalCoverFallback.hidden = true;
-    modalCoverFallback.textContent = book.title || "Livre";
+
+    if (modalCoverFallback){
+      modalCoverFallback.hidden = true;
+      modalCoverFallback.textContent = "";
+    }
 
     modalCover.onerror = function(){
       modalCover.hidden = true;
-      modalCoverFallback.hidden = false;
+      if (modalCoverWrap) modalCoverWrap.hidden = true;
+      if (modalCoverFallback){
+        modalCoverFallback.hidden = true;
+        modalCoverFallback.textContent = "";
+      }
     };
 
     modal.hidden = false;
